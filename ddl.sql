@@ -14,8 +14,8 @@ CREATE TABLE "doctors" (
     "password" varchar,
     "gender" varchar,
     "birthdate" date,
-    "work_start_time" datetime,
-    "work_end_time" datetime
+    "work_start_time" timestamp without time zone,
+    "work_end_time" timestamp without time zone
 );
 
 CREATE TABLE "patients" (
@@ -29,12 +29,12 @@ CREATE TABLE "patients" (
     "vaccine_count" int
 );
 
-CREATE TYPE appointment_status as ENUM ("IN_QUEUE","DONE","CANCELLED");
+CREATE TYPE appointment_status as ENUM ('IN_QUEUE','DONE','CANCELLED');
 CREATE TABLE "appointments" (
     "id" serial PRIMARY KEY,
     "patient_id" int,
     "doctor_id" int,
-    "datetime" datetime,
+    "datetime" timestamp without time zone,
     "status" appointment_status,
     "diagnose" text,
     "notes" text
