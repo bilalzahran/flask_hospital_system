@@ -26,7 +26,7 @@ CREATE TABLE "patients" (
     "no_ktp" varchar,
     "address" text,
     "vaccine_type" varchar,
-    "vaccine_count" varchar
+    "vaccine_count" int
 );
 
 CREATE TYPE appointment_status as ENUM ("IN_QUEUE","DONE","CANCELLED");
