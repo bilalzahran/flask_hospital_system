@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from app.model.database import employee
 from app.model.database.employee import Employee
 from app.app import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -14,6 +13,7 @@ def get_employee(employee_id):
 
 
 def add_employee(data):
+    #TODO: username validation
     try:
         new_employee = Employee(
             name=data["name"],
@@ -39,7 +39,7 @@ def add_employee(data):
 
 def update_employee(id, data):
     try:
-        employee = Employee.query.filter_by(id=id).update(data)
+        Employee.query.filter_by(id=id).update(data)
         db.session.commit()
         return get_employee(id)
     except SQLAlchemyError as ex:
