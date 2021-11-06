@@ -1,4 +1,5 @@
 from app.model.database import db
+from app.app import bcrypt
 
 
 class Employee(db.Model):
@@ -10,15 +11,6 @@ class Employee(db.Model):
     password = db.Column(db.Text)
     gender = db.Column(db.String)
     birthdate = db.Column(db.Date)
-
-    def __init__(
-        self, name: str, username: str, password: str, gender: str, birthdate: str
-    ):
-        self.name = name
-        self.username = username
-        self.password = password
-        self.gender = gender
-        self.birthdate = birthdate
 
     def __repr__(self):
         return "<User %>" % (self.name)
