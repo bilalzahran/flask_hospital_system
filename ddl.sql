@@ -14,8 +14,8 @@ CREATE TABLE "doctors" (
     "password" varchar,
     "gender" varchar,
     "birthdate" date,
-    "work_start_time" timestamp without time zone,
-    "work_end_time" timestamp without time zone
+    "work_start_time" time without time zone,
+    "work_end_time" time without time zone
 );
 
 CREATE TABLE "patients" (

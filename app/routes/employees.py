@@ -89,6 +89,6 @@ class Employee(Resource):
     def delete(self, employee_id):
         employee = get_employee(employee_id)
         if employee:
-            return delete_employee(employee_id)
+            return delete_employee(employee)
         else:
             employee_router.abort(404)

@@ -1,5 +1,4 @@
 from app.model.database import db
-from app.app import bcrypt
 
 
 class Employee(db.Model):
