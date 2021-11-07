@@ -13,16 +13,12 @@ class Patient(db.Model):
     vaccine_type = db.Column(db.String)
     vaccine_count = db.Column(db.Integer)
 
-    def __init__(
-        self, name, gender, birthdate, no_ktp, address, vaccine_type, vaccine_count
-    ):
+    def __init__(self, name, gender, birthdate, no_ktp, address):
         self.name = name
         self.gender = gender
         self.birthdate = birthdate
         self.no_ktp = no_ktp
         self.address = address
-        self.vaccine_type = vaccine_type
-        self.vaccine_count = vaccine_count
 
     def __repr__(self):
         return "<Post: %r>" % (self.name)
