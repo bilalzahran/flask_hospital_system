@@ -6,12 +6,13 @@ from app.service.employees import (
     get_all_employee,
     get_employee,
     update_employee,
+    employee_login,
 )
 
 from app.routes import api
 
-employee_router = api.namespace("employees")
-employee = employee_router.model(
+employee_routes = api.namespace("employees")
+employee = employee_routes.model(
     "employee",
     {
         "name": fields.String(required=True),
@@ -22,7 +23,7 @@ employee = employee_router.model(
     },
 )
 
-employee_update = employee_router.model(
+employee_update = employee_routes.model(
     "employee_update",
     {
         "name": fields.String(),
@@ -33,7 +34,7 @@ employee_update = employee_router.model(
     },
 )
 
-employee_out = employee_router.model(
+employee_out = employee_routes.model(
     "employee_out",
     {
         "id": fields.Integer(),
@@ -45,50 +46,66 @@ employee_out = employee_router.model(
     },
 )
 
+employee_signin = employee_routes.model(
+    "employee_login",
+    {
+        "username": fields.String(required=True),
+        "password": fields.String(required=True),
+    },
+)
 
-@employee_router.route("/")
+
+@employee_routes.route("/")
 class EmployeeList(Resource):
-    @employee_router.doc("Get all employee")
-    @employee_router.marshal_list_with(employee_out, envelope="data")
+    @employee_routes.doc("Get all employee")
+    @employee_routes.marshal_list_with(employee_out, envelope="data")
     def get(self):
         return get_all_employee()
 
-    @employee_router.doc("Add new employee")
-    @employee_router.response(201, "Employee successfully added.")
-    @employee_router.expect(employee, validate=True)
+    @employee_routes.doc("Add new employee")
+    @employee_routes.response(201, "Employee successfully added.")
+    @employee_routes.expect(employee, validate=True)
     def post(self):
         data = request.json
         return add_employee(data)
 
 
-@employee_router.route("/<employee_id>")
+@employee_routes.route("/<employee_id>")
 @api.param("employee_id", "The Employee identifier")
-@employee_router.response(404, "Employee not found")
+@employee_routes.response(404, "Employee not found")
 class Employee(Resource):
-    @employee_router.doc("Get Employee")
-    @employee_router.marshal_with(employee_out)
+    @employee_routes.doc("Get Employee")
+    @employee_routes.marshal_with(employee_out)
     def get(self, employee_id):
         employee = get_employee(employee_id)
         if employee:
             return employee
         else:
-            employee_router.abort(404)
+            employee_routes.abort(404)
 
-    @employee_router.response(204, "employee updated")
-    @employee_router.expect(employee_update, validate=True)
-    @employee_router.marshal_with(employee_out)
+    @employee_routes.response(204, "employee updated")
+    @employee_routes.expect(employee_update, validate=True)
+    @employee_routes.marshal_with(employee_out)
     def put(self, employee_id):
         data = request.json
         employee = get_employee(employee_id)
         if employee:
             return update_employee(employee_id, data)
         else:
-            employee_router.abort(404)
+            employee_routes.abort(404)
 
-    @employee_router.response(204, "employee deleted")
+    @employee_routes.response(204, "employee deleted")
     def delete(self, employee_id):
         employee = get_employee(employee_id)
         if employee:
             return delete_employee(employee)
         else:
-            employee_router.abort(404)
+            employee_routes.abort(404)
+
+
+@employee_routes.route("/login")
+class EmployeeAuth(Resource):
+    @employee_routes.expect(employee_signin, validate=True)
+    def post(self):
+        payload = request.json
+        return employee_login(payload)

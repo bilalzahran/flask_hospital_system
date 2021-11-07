@@ -1,4 +1,4 @@
-from app.model.database import db
+from app.model import db
 
 
 class Doctors(db.Model):

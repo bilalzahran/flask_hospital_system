@@ -1,5 +1,5 @@
 import sqlalchemy
-from app.model.database.doctors import Doctors
+from app.model.doctors import Doctors
 from app.app import db
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, date, time

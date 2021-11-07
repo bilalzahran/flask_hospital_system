@@ -2,7 +2,7 @@ CREATE TABLE "employees" (
     "id" serial PRIMARY KEY,
     "name" varchar,
     "username" varchar,
-    "password" varchar,
+    "password_hash" varchar,
     "gender" varchar,
     "birthdate" date
 );
@@ -11,7 +11,7 @@ CREATE TABLE "doctors" (
     "id" serial PRIMARY KEY,
     "name" varchar,
     "username" varchar,
-    "password" varchar,
+    "password_hash" varchar,
     "gender" varchar,
     "birthdate" date,
     "work_start_time" time without time zone,

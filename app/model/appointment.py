@@ -1,5 +1,5 @@
 from sqlalchemy.sql.schema import ForeignKey
-from app.model.database import db
+from app.model import db
 from enum import Enum
 
 

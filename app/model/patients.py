@@ -1,5 +1,5 @@
 from operator import add
-from app.model.database import db
+from app.model import db
 
 
 class Patient(db.Model):
