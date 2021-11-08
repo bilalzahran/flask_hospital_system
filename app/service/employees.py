@@ -1,7 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask import request
 from app.model.employee import Employee
 from app.app import db
-from app.utils.jwt_helper import encode_token
+from app.utils.jwt_helper import encode_token, decode_token
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -95,3 +95,29 @@ def employee_login(data):
         }
 
         return response_object, 500
+
+
+def get_logged_in_employee(payload):
+    token = payload.headers.get("Authorization")
+    if token:
+        data = decode_token(token)
+        if not isinstance(data, str):
+            employee_data: Employee = Employee.query.filter_by(id=data["user"]).first()
+            response_object = {
+                "status": "success",
+                "data": {
+                    "id": employee_data.id,
+                    "username": employee_data.username,
+                },
+            }
+            return response_object, 200
+        else:
+            response_object = {
+                "status": "fail",
+                "message": data,
+            }
+            return response_object, 401
+
+    else:
+        response_object = {"status": "fail", "message": "token is missing"}
+        return response_object, 401

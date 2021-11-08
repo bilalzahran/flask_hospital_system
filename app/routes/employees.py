@@ -8,6 +8,7 @@ from app.service.employees import (
     update_employee,
     employee_login,
 )
+from app.routes.middleware.token_required import token_required
 
 from app.routes import api
 
@@ -58,11 +59,13 @@ employee_signin = employee_routes.model(
 @employee_routes.route("/")
 class EmployeeList(Resource):
     @employee_routes.doc("Get all employee")
+    @token_required
     @employee_routes.marshal_list_with(employee_out, envelope="data")
     def get(self):
         return get_all_employee()
 
     @employee_routes.doc("Add new employee")
+    @token_required
     @employee_routes.response(201, "Employee successfully added.")
     @employee_routes.expect(employee, validate=True)
     def post(self):
@@ -76,6 +79,7 @@ class EmployeeList(Resource):
 class Employee(Resource):
     @employee_routes.doc("Get Employee")
     @employee_routes.marshal_with(employee_out)
+    @token_required
     def get(self, employee_id):
         employee = get_employee(employee_id)
         if employee:
@@ -86,6 +90,7 @@ class Employee(Resource):
     @employee_routes.response(204, "employee updated")
     @employee_routes.expect(employee_update, validate=True)
     @employee_routes.marshal_with(employee_out)
+    @token_required
     def put(self, employee_id):
         data = request.json
         employee = get_employee(employee_id)
@@ -95,6 +100,7 @@ class Employee(Resource):
             employee_routes.abort(404)
 
     @employee_routes.response(204, "employee deleted")
+    @token_required
     def delete(self, employee_id):
         employee = get_employee(employee_id)
         if employee:

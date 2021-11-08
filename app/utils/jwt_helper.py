@@ -8,14 +8,14 @@ def encode_token(user_id: int):
     try:
         """Generete Token by User Id"""
         payload = {
-            "expire": time.mktime(
+            "exp": time.mktime(
                 (
                     datetime.datetime.utcnow()
                     + datetime.timedelta(hours=int(config.JWT_HOUR))
                 ).timetuple()
             ),
-            "created_at": time.mktime(datetime.datetime.utcnow().timetuple()),
-            "user": user_id,
+            "iat": time.mktime(datetime.datetime.utcnow().timetuple()),
+            "iss": user_id,
         }
 
         return jwt.encode(payload=payload, key=config.JWT_KEY, algorithm="HS256")
@@ -26,8 +26,7 @@ def encode_token(user_id: int):
 
 def decode_token(token):
     try:
-        data = jwt.decode(token, config.JWT_KEY)
-        return data["user"]
+        return jwt.decode(jwt=token, key=config.JWT_KEY, algorithms=["HS256"])
     except jwt.ExpiredSignatureError:
         return "Token Expired"
     except jwt.InvalidTokenError:
