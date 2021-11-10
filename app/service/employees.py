@@ -3,6 +3,7 @@ from app.model.employee import Employee
 from app.app import db
 from app.utils.jwt_helper import encode_token, decode_token
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime
 
 
 def get_all_employee():
@@ -14,20 +15,27 @@ def get_employee(employee_id):
 
 
 def add_employee(data):
-    # TODO: username validation
     try:
+        """ "Check if username exist in database"""
+        if Employee.query.filter_by(username=data["username"]).count() >= 1:
+            response_object = {"status": "fail", "message": "username already exist!"}
+            return response_object, 202
+
         new_employee = Employee(
             name=data["name"],
             username=data["username"],
             password=data["password"],
             gender=data["gender"],
-            birthdate=data["birthdate"],
+            birthdate=datetime.strptime(data["birthdate"], "%Y-%m-%d"),
         )
         db.session.add(new_employee)
         db.session.commit()
         response_object = {
-            "status": "success",
-            "message": "successfuly created",
+            "name": new_employee.name,
+            "username": new_employee.username,
+            "password": new_employee.password,
+            "gender": new_employee.gender,
+            "birthdate": datetime.strftime(new_employee.birthdate, "%Y-%m-%d"),
         }
         return response_object, 201
     except SQLAlchemyError as ex:
@@ -102,7 +110,7 @@ def get_logged_in_employee(payload):
     if token:
         data = decode_token(token)
         if not isinstance(data, str):
-            employee_data: Employee = Employee.query.filter_by(id=data["user"]).first()
+            employee_data: Employee = Employee.query.filter_by(id=data["iss"]).first()
             response_object = {
                 "status": "success",
                 "data": {

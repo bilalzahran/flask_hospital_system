@@ -65,9 +65,9 @@ class EmployeeList(Resource):
         return get_all_employee()
 
     @employee_routes.doc("Add new employee")
-    @token_required
     @employee_routes.response(201, "Employee successfully added.")
     @employee_routes.expect(employee, validate=True)
+    @token_required
     def post(self):
         data = request.json
         return add_employee(data)

@@ -8,6 +8,7 @@ from app.service.patient import (
     add_patient,
     update_patient,
 )
+from app.routes.middleware.token_required import token_required
 
 patient_routes = api.namespace("patients")
 
@@ -52,12 +53,14 @@ patients_out = patient_routes.model(
 @patient_routes.route("/")
 class PatientList(Resource):
     @patient_routes.doc("Get All Doctors")
+    @token_required
     @patient_routes.marshal_list_with(patients_out, envelope="data")
     def get(self):
         return get_all_patient()
 
     @patient_routes.doc("Create new patient")
     @patient_routes.response(201, "patient successfully added.")
+    @token_required
     @patient_routes.expect(patient, validate=True)
     def post(self):
         data = request.json
@@ -69,6 +72,7 @@ class PatientList(Resource):
 @patient_routes.response(404, "patient not found")
 class Patient(Resource):
     @patient_routes.doc("get patient")
+    @token_required
     @patient_routes.marshal_with(patients_out)
     def get(self, patient_id):
         patient = get_patient(patient_id)
@@ -79,6 +83,7 @@ class Patient(Resource):
 
     @patient_routes.response(204, "patient updated")
     @patient_routes.expect(patients_update, validate=True)
+    @token_required
     @patient_routes.marshal_with(patients_out)
     def put(self, patient_id):
         data = request.json
@@ -89,6 +94,7 @@ class Patient(Resource):
             patient_routes.abort(404)
 
     @patient_routes.response(204, "patient deleted")
+    @token_required
     def delete(self, patient_id):
         patient = get_patient(patient_id)
         if patient:

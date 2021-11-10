@@ -1,4 +1,4 @@
-from app.model import db
+from app.model import db, bcrypt
 
 
 class Doctors(db.Model):
@@ -7,29 +7,19 @@ class Doctors(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String)
     username = db.Column(db.String)
-    password = db.Column(db.Text)
+    password_hash = db.Column(db.Text)
     gender = db.Column(db.String)
     birthdate = db.Column(db.Date)
     work_start_time = db.Column(db.DateTime)
     work_end_time = db.Column(db.DateTime)
 
-    def __init__(
-        self,
-        name,
-        username,
-        password,
-        gender,
-        birthdate,
-        work_start_time,
-        work_end_time,
-    ):
-        self.name = name
-        self.username = username
-        self.password = password
-        self.gender = gender
-        self.birthdate = birthdate
-        self.work_start_time = work_start_time
-        self.work_end_time = work_end_time
+    @property
+    def password(self):
+        return self.password_hash
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
     def __repr__(self):
         return "<Doctors %s>" % (self.name)

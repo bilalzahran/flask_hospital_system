@@ -1,4 +1,5 @@
-import sqlalchemy
+from flask import json, jsonify
+from werkzeug.wrappers import response
 from app.model.doctors import Doctors
 from app.app import db
 from sqlalchemy.exc import SQLAlchemyError
@@ -14,8 +15,11 @@ def get_doctor(doctor_id):
 
 
 def add_doctor(data):
-    # TODO: Add username validation
     try:
+        if Doctors.query.filter_by(username=data["username"]).first():
+            response_object = {"status": "fail", "message": "username already exist!"}
+            return response_object, 202
+
         new_doctor = Doctors(
             name=data["name"],
             username=data["username"],
@@ -27,7 +31,15 @@ def add_doctor(data):
         )
         db.session.add(new_doctor)
         db.session.commit()
-        response_object = {"status": "success", "message": "data successfuly created"}
+        response_object = {
+            "name": new_doctor.name,
+            "username": new_doctor.username,
+            "password": new_doctor.password,
+            "gender": new_doctor.gender,
+            "birthdate": datetime.strftime(new_doctor.birthdate, "%Y-%m-%d"),
+            "work_start_time": time.strftime(new_doctor.work_start_time, "%H:%M:%S"),
+            "work_end_time": time.strftime(new_doctor.work_end_time, "%H:%M:%S"),
+        }
         return response_object, 201
     except SQLAlchemyError as ex:
         response_object = {"status": "fail", "message": "create new data failed"}

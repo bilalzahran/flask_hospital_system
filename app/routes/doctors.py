@@ -8,6 +8,7 @@ from app.service.doctors import (
     get_doctor,
     update_doctor,
 )
+from app.routes.middleware.token_required import token_required
 
 doctor_routes = api.namespace("doctors")
 
@@ -56,6 +57,7 @@ doctor_out = doctor_routes.model(
 @doctor_routes.route("/")
 class DoctorList(Resource):
     @doctor_routes.doc("Get All Doctors")
+    @token_required
     @doctor_routes.marshal_list_with(doctor_out, envelope="data")
     def get(self):
         return get_all_doctors()
@@ -63,6 +65,7 @@ class DoctorList(Resource):
     @doctor_routes.doc("Create new doctor")
     @doctor_routes.response(201, "Doctor successfully added.")
     @doctor_routes.expect(doctor, validate=True)
+    @token_required
     def post(self):
         data = request.json
         return add_doctor(data)
@@ -73,6 +76,7 @@ class DoctorList(Resource):
 @doctor_routes.response(404, "doctor not found")
 class Doctor(Resource):
     @doctor_routes.doc("get doctor")
+    @token_required
     @doctor_routes.marshal_with(doctor_out)
     def get(self, doctor_id):
         doctor = get_doctor(doctor_id)
@@ -83,6 +87,7 @@ class Doctor(Resource):
 
     @doctor_routes.response(204, "employee updated")
     @doctor_routes.expect(doctor_update, validate=True)
+    @token_required
     @doctor_routes.marshal_with(doctor_out)
     def put(self, doctor_id):
         data = request.json
@@ -93,6 +98,7 @@ class Doctor(Resource):
             doctor_routes.abort(404)
 
     @doctor_routes.response(204, "employee deleted")
+    @token_required
     def delete(self, doctor_id):
         doctor = get_doctor(doctor_id)
         if doctor:
