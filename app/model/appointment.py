@@ -14,18 +14,10 @@ class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     doctor_id = db.Column(db.Integer, ForeignKey("doctors.id"))
     patient_id = db.Column(db.Integer, ForeignKey("patients.id"))
-    datetime = db.Column(db.Datetime)
-    status = db.Column(db.Enum(AppointmentStatus))
+    datetime = db.Column(db.DateTime)
+    status = db.Column(db.String)
     diagnose = db.Column(db.Text)
     notes = db.Column(db.Text)
-
-    def __init__(self, doctor_id, patient_id, datetime, status, diagnose, notes):
-        self.doctor_id = doctor_id
-        self.patient_id = patient_id
-        self.datetime = datetime
-        self.status = diagnose
-        self.status = status
-        self.notes = notes
 
     def __repr__(self):
         return "<Appointment %i>" % (self.id)

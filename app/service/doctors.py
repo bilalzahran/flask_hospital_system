@@ -1,9 +1,7 @@
-from flask import json, jsonify
-from werkzeug.wrappers import response
 from app.model.doctors import Doctors
 from app.app import db
 from sqlalchemy.exc import SQLAlchemyError
-from datetime import datetime, date, time
+from datetime import datetime, time
 
 
 def get_all_doctors():
