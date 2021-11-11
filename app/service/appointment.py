@@ -60,6 +60,17 @@ def add_appointment(payload):
         return response_object, 202
 
 
+def update_appointment(id, data):
+    try:
+        Appointment.query.filter_by(id=id).update(data)
+        db.session.commit()
+        return get_appointment(id)
+    except SQLAlchemyError as ex:
+        response_object = {"status": "fail", "message": "update doctor failed"}
+
+        return response_object, 202
+
+
 def delete_appointment(data):
     try:
         db.session.delete(data)

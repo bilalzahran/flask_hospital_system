@@ -85,19 +85,19 @@ class Doctor(Resource):
         else:
             doctor_routes.abort(404)
 
-    @doctor_routes.response(204, "employee updated")
+    @doctor_routes.response(204, "doctor updated")
     @doctor_routes.expect(doctor_update, validate=True)
     @token_required
     @doctor_routes.marshal_with(doctor_out)
     def put(self, doctor_id):
         data = request.json
-        employee = get_doctor(doctor_id)
-        if employee:
+        doctor = get_doctor(doctor_id)
+        if doctor:
             return update_doctor(doctor_id, data)
         else:
             doctor_routes.abort(404)
 
-    @doctor_routes.response(204, "employee deleted")
+    @doctor_routes.response(204, "doctor deleted")
     @token_required
     def delete(self, doctor_id):
         doctor = get_doctor(doctor_id)

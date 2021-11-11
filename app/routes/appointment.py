@@ -6,6 +6,7 @@ from app.service.appointment import (
     get_all_appointment,
     get_appointment,
     delete_appointment,
+    update_appointment,
 )
 from app.routes.middleware.token_required import token_required
 
@@ -40,8 +41,8 @@ appointment_out = appointment_routes.model(
 @appointment_routes.route("/")
 class AppointmentList(Resource):
     @appointment_routes.doc("Get all appointments")
-    @appointment_routes.marshal_list_with(appointment_out, envelope="data")
     @token_required
+    @appointment_routes.marshal_list_with(appointment_out, envelope="data")
     def get(self):
         return get_all_appointment()
 
@@ -56,6 +57,28 @@ class AppointmentList(Resource):
 
 @appointment_routes.route("/<appointment_id>")
 class Appointment(Resource):
+    @appointment_routes.doc("get doctor")
+    @token_required
+    @appointment_routes.marshal_with(appointment_out)
+    def get(self, appointment_id):
+        appointment = get_appointment(appointment_id)
+        if appointment:
+            return appointment
+        else:
+            appointment_routes.abort(404)
+
+    @appointment_routes.response(204, "appointment updated")
+    @appointment_routes.expect(appointment, validate=True)
+    @token_required
+    @appointment_routes.marshal_with(appointment_out)
+    def put(self, appointment_id):
+        data = request.json
+        appointment = get_appointment(appointment_id)
+        if appointment:
+            return update_appointment(appointment_id, data)
+        else:
+            appointment_routes.abort(404)
+
     @appointment_routes.response(204, "employee deleted")
     @token_required
     def delete(self, appointment_id):
